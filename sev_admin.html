@@ -265,7 +265,7 @@
         </form>
         <div class="mt-10 pt-6 border-t border-slate-100 text-center">
           <button onclick="showAppInfo()" class="text-xs text-slate-400 hover:text-royal-blue transition">
-            SCBT Integrated System • v1.0 | Developed by MB
+            About SCBT Version 1.0
           </button>
         </div>
       </div>
@@ -658,8 +658,15 @@
             </div>
           </div>
         </div>
-      </main>
-    </div>
+          </main>
+    
+    <!-- Footer dashboard -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center">
+      <button onclick="showAppInfo()" class="text-xs text-slate-400 hover:text-royal-blue transition">
+        About SCBT Version 1.0
+      </button>
+    </footer>
+  </div>
   </div>
 
   <!-- ============================================================
@@ -1147,6 +1154,45 @@
       }
     }
 
+    /* ============================================================
+       HELPER: Format tanggal & waktu (zona Jakarta WIB)
+       Google Sheets mengirim Date sebagai ISO string,
+       fungsi ini konversi ke format yang readable
+       ============================================================ */
+    function formatTanggal(val) {
+      if (!val) return '-';
+      // Jika string ISO (mengandung 'T' dan 'Z' atau '-')
+      if (typeof val === 'string' && val.includes('T')) {
+        try {
+          const d = new Date(val);
+          return d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric' });
+        } catch(e) { return val; }
+      }
+      // Jika string yyyy-mm-dd (dari GAS format baru)
+      if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        const parts = val.split('-');
+        const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        return parts[2] + ' ' + months[parseInt(parts[1])-1] + ' ' + parts[0];
+      }
+      return val;
+    }
+
+    function formatJam(val) {
+      if (!val) return '';
+      // Jika string ISO (1899-12-31T06:30:00.000Z = time-only)
+      if (typeof val === 'string' && val.includes('T')) {
+        try {
+          const d = new Date(val);
+          return d.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: false });
+        } catch(e) { return val; }
+      }
+      // Jika sudah format HH:mm
+      if (typeof val === 'string' && /^\d{2}:\d{2}$/.test(val)) {
+        return val;
+      }
+      return val;
+    }
+
     function renderSesiCards() {
       const c = document.getElementById('sesi-cards');
       c.innerHTML = state.sesi.map(s => `
@@ -1159,9 +1205,9 @@
             <span class="text-xs px-2 py-0.5 rounded-full ${s.status === 'aktif' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}">${s.status}</span>
           </div>
           <div class="space-y-1.5 text-sm text-slate-600">
-            <div class="flex justify-between"><span>Mata Pelajaran</span><span class="font-semibold text-slate-900">${s.mata_pelajaran}</span></div>
-            <div class="flex justify-between"><span>Tanggal</span><span class="font-semibold text-slate-900">${s.tanggal}</span></div>
-            <div class="flex justify-between"><span>Waktu</span><span class="font-semibold text-slate-900">${s.jam_mulai} - ${s.jam_selesai}</span></div>
+            <div class="flex justify-between"><span>Mata Pelajaran</span><span class="font-semibold text-slate-900">${s.mata_pelajaran || '-'}</span></div>
+            <div class="flex justify-between"><span>Tanggal</span><span class="font-semibold text-slate-900">${formatTanggal(s.tanggal)}</span></div>
+            <div class="flex justify-between"><span>Waktu</span><span class="font-semibold text-slate-900">${formatJam(s.jam_mulai)} - ${formatJam(s.jam_selesai)} WIB</span></div>
             <div class="flex justify-between"><span>Durasi</span><span class="font-semibold text-slate-900">${s.durasi_menit} menit</span></div>
             <div class="flex justify-between"><span>Jumlah Soal</span><span class="font-semibold text-slate-900">${s.jumlah_soal}</span></div>
             <div class="flex justify-between"><span>Ruangan</span><span class="font-semibold text-slate-900">${s.ruangan_terkait || '-'}</span></div>
