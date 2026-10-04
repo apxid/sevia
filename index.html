@@ -512,7 +512,7 @@
 
         <!-- CTA: lime pill button -->
         <div class="relative z-10 mb-6 sm:mb-8">
-          <button onclick="goToLayer2()" class="btn-lime-pill inline-flex items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg">
+          <button id="btn-mulai-ujian" onclick="goToLayer2()" class="btn-lime-pill inline-flex items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg">
             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>
@@ -545,7 +545,7 @@
 
         <!-- Footer (clickable → about popup) -->
         <div class="relative z-10 pt-6 border-t border-white/10">
-          <button onclick="showAppInfo()" class="text-blue-200 hover:text-lime-300 transition text-sm font-medium">
+          <button id="btn-about-welcome" onclick="showAppInfo()" class="text-blue-200 hover:text-lime-300 transition text-sm font-medium">
             About SCBT Version 1.0
           </button>
           <div class="text-blue-300/70 text-xs mt-1">2026 © all rights reserved</div>
@@ -1956,7 +1956,69 @@
        ============================================================ */
     document.addEventListener('DOMContentLoaded', () => {
       restoreSession();
+      setupBackupEventListeners();
+      console.log('[SCBT] Page loaded. Functions:', { goToLayer2: typeof goToLayer2, showAppInfo: typeof showAppInfo, showLayer: typeof showLayer });
     });
+
+    /* ============================================================
+       BACKUP EVENT LISTENERS
+       Tambahan: pasang addEventListener pada tombol-tombol utama
+       sebagai backup jika inline onclick tidak jalan (cache issue,
+       CSP, atau file lama di-cache browser user)
+       ============================================================ */
+    function setupBackupEventListeners() {
+      // Tombol "Mulai Ujian" di Layer 1
+      const btnMulai = document.getElementById('btn-mulai-ujian');
+      if (btnMulai) {
+        btnMulai.addEventListener('click', function(e) {
+          console.log('[SCBT] Tombol Mulai Ujian diklik (via addEventListener)');
+          if (typeof goToLayer2 === 'function') {
+            goToLayer2();
+          } else {
+            console.error('[SCBT] goToLayer2 tidak terdefinisi!');
+            // Fallback manual: pindah ke Layer 2
+            showLayer(2);
+          }
+        });
+      }
+
+      // Tombol "About SCBT Version 1.0" di Layer 1 footer
+      const btnAboutWelcome = document.getElementById('btn-about-welcome');
+      if (btnAboutWelcome) {
+        btnAboutWelcome.addEventListener('click', function(e) {
+          console.log('[SCBT] Tombol About diklik (via addEventListener)');
+          if (typeof showAppInfo === 'function') {
+            showAppInfo();
+          } else {
+            console.error('[SCBT] showAppInfo tidak terdefinisi!');
+            // Fallback manual: tampilkan modal
+            const modal = document.getElementById('modal-info');
+            if (modal) modal.classList.remove('hidden');
+          }
+        });
+      }
+
+      // Delegasi event: tangkap semua klik pada elemen dengan data-action
+      document.addEventListener('click', function(e) {
+        const target = e.target.closest('[data-action]');
+        if (!target) return;
+        const action = target.dataset.action;
+        console.log('[SCBT] Click delegated:', action);
+        switch(action) {
+          case 'goToLayer2':
+            if (typeof goToLayer2 === 'function') goToLayer2();
+            break;
+          case 'showAppInfo':
+            if (typeof showAppInfo === 'function') showAppInfo();
+            break;
+          case 'closeAppInfo':
+            if (typeof closeAppInfo === 'function') closeAppInfo();
+            break;
+        }
+      });
+
+      console.log('[SCBT] Backup event listeners attached.');
+    }
   </script>
 </body>
 </html>
