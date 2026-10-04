@@ -310,7 +310,7 @@
        LOGIN CARD ELEGANT — Split screen with chevron + glassmorphism
        ============================================================ */
     .login-shell-bg {
-      background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 50%, #ecfeff 100%);
+      background: linear-gradient(135deg, #172554 0%, #1e3a8a 45%, #2563eb 100%);
       position: relative;
       min-height: 100vh;
     }
@@ -318,14 +318,14 @@
       content: '';
       position: absolute; inset: 0;
       background:
-        radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 80% 70%, rgba(163, 230, 53, 0.06) 0%, transparent 40%);
+        radial-gradient(circle at 20% 30%, rgba(163, 230, 53, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.3) 0%, transparent 45%);
       pointer-events: none;
     }
     .login-card-elegant {
       background: white;
       border-radius: 24px;
-      box-shadow: 0 25px 50px -12px rgba(30, 58, 138, 0.25), 0 0 0 1px rgba(163, 230, 53, 0.2);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(163, 230, 53, 0.3);
       overflow: hidden;
       position: relative;
     }
@@ -455,6 +455,9 @@
 
       <!-- Footer (clickable → about popup) -->
       <footer class="w-full text-center pt-6 mt-8 border-t border-white/10">
+        <button onclick="showAppInfo()" class="text-blue-200 hover:text-lime-300 transition text-sm font-medium">
+          SCBT • SEVIA • Smart Examination & Virtual Assessment
+        </button>
         <div class="text-blue-300 text-xs mt-1">
           <button onclick="showAppInfo()" class="hover:text-lime-300 underline-offset-2 hover:underline">
             About SCBT Version 1.0
@@ -465,7 +468,7 @@
   </section>
 
   <!-- ============================================================
-       LAYER 2: LOGIN SISWA — Split-screen elegant dengan chevron
+       LAYER 2: LOGIN SISWA — Split card di tengah, background full biru
        ============================================================ -->
   <section id="layer-login" class="layer royal-bg min-h-screen text-white relative">
     <div class="login-shell-bg flex items-center justify-center p-4 sm:p-6">
@@ -963,8 +966,8 @@
       </div>
       <div class="space-y-3 text-sm">
         <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Pengembang</span><span class="font-semibold text-slate-900">MB</span></div>
-        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Build</span><span class="font-mono text-slate-900"> 3 Oktober 2026</span></div>
-        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Versi</span><span class="font-mono text-slate-900">Versi 1.0</span></div>
+        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Build</span><span class="font-mono text-slate-900">2025.10.03</span></div>
+        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Versi</span><span class="font-mono text-slate-900">v1.0</span></div>
         <div class="flex justify-between py-2"><span class="text-slate-500">Kontak Email</span><a href="mailto:yanuar.b@gmail.com" class="font-semibold text-royal-blue hover:underline">yanuar.b@gmail.com</a></div>
       </div>
       <button onclick="closeAppInfo()" class="btn-royal w-full py-3 rounded-xl mt-6">Tutup</button>
