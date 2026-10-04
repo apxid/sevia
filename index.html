@@ -305,6 +305,92 @@
       body * { visibility: hidden; }
       .print-area, .print-area * { visibility: visible; }
     }
+
+    /* ============================================================
+       LOGIN CARD ELEGANT — Split screen with chevron + glassmorphism
+       ============================================================ */
+    .login-shell-bg {
+      background: #0f172a;
+      position: relative;
+      min-height: 100vh;
+    }
+    .login-shell-bg::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(37, 99, 235, 0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .login-card-elegant {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(163, 230, 53, 0.3);
+      overflow: hidden;
+      position: relative;
+    }
+    .login-blue-side {
+      background: linear-gradient(160deg, #3b82f6 0%, #1e3a8a 70%, #172554 100%);
+      position: relative;
+      overflow: hidden;
+      color: white;
+    }
+    .login-blue-side::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(163, 230, 53, 0.18) 0%, transparent 35%),
+        radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.4) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .login-blue-side::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      right: -1px;
+      width: 60px;
+      background: white;
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 30% 50%);
+    }
+    @media (max-width: 768px) {
+      .login-blue-side::after { display: none; }
+    }
+    .login-logo-glass {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+    }
+    .login-input-elegant {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      transition: all 0.2s ease;
+      color: #1e293b;
+    }
+    .login-input-elegant:focus {
+      outline: none;
+      background: white;
+      border-color: #a3e635;
+      box-shadow: 0 0 0 4px rgba(163, 230, 53, 0.15);
+    }
+    .btn-masuk-elegant {
+      background: linear-gradient(135deg, #d9f99d 0%, #a3e635 100%);
+      color: #0f172a;
+      font-weight: 700;
+      box-shadow: 0 8px 20px -5px rgba(163, 230, 53, 0.4);
+      transition: all 0.2s ease;
+    }
+    .btn-masuk-elegant:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px -5px rgba(163, 230, 53, 0.6);
+      filter: brightness(1.05);
+    }
+    .lime-underline {
+      display: inline-block;
+      width: 48px;
+      height: 4px;
+      background: #a3e635;
+      border-radius: 2px;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -372,7 +458,7 @@
         </button>
         <div class="text-blue-300 text-xs mt-1">
           <button onclick="showAppInfo()" class="hover:text-lime-300 underline-offset-2 hover:underline">
-            SCBT Integrated System • v1.0 | Developed by MB
+            About SCBT Version 1.0
           </button>
         </div>
       </footer>
@@ -380,56 +466,73 @@
   </section>
 
   <!-- ============================================================
-       LAYER 2: LOGIN SISWA (username + password)
+       LAYER 2: LOGIN SISWA — Split-screen elegant dengan chevron
        ============================================================ -->
   <section id="layer-login" class="layer royal-bg min-h-screen text-white relative">
-    <div class="relative z-10 w-full min-h-screen flex items-center justify-center p-6">
+    <div class="login-shell-bg flex items-center justify-center p-4 sm:p-6">
+      <div class="relative z-10 w-full max-w-5xl">
+        <div class="login-card-elegant grid md:grid-cols-2 min-h-[600px]">
 
-      <div class="w-full max-w-md">
-        <!-- Header -->
-        <div class="text-center mb-8">
-          <img src="https://yanuar-moga.github.io/cbt/assets/logo.png" alt="Logo" class="w-16 h-16 mx-auto rounded-2xl bg-white/10 p-1.5 mb-4 logo-3d" />
-          <h2 class="text-3xl font-extrabold">Login Peserta</h2>
-          <p class="text-blue-200 mt-2 text-sm">Masukkan username dan password yang telah diberikan.</p>
-        </div>
-
-        <!-- Form -->
-        <form id="login-form" class="space-y-5 bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/10">
-          <div>
-            <label class="block text-sm font-semibold text-blue-100 mb-1.5">Username</label>
-            <input id="login-username" type="text" required placeholder="cth: siswa001" autocomplete="off"
-              class="w-full px-4 py-3 rounded-xl bg-white text-slate-900 border-2 border-transparent focus:border-lime-400 focus:outline-none focus:ring-4 focus:ring-lime-400/30 transition" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-blue-100 mb-1.5">Password</label>
-            <div class="relative">
-              <input id="login-password" type="password" required placeholder="••••••••" autocomplete="off"
-                class="w-full px-4 py-3 pr-12 rounded-xl bg-white text-slate-900 border-2 border-transparent focus:border-lime-400 focus:outline-none focus:ring-4 focus:ring-lime-400/30 transition" />
-              <button type="button" onclick="togglePwd('login-password', this)"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
-                <svg class="w-5 h-5 eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                </svg>
-              </button>
+          <!-- LEFT: Blue panel with chevron -->
+          <div class="login-blue-side p-8 sm:p-12 lg:p-16 flex flex-col justify-between">
+            <div class="relative z-10">
+              <p class="text-lime-400 font-bold text-xs sm:text-sm tracking-wider uppercase">ASESMEN DIGITAL</p>
+              <h2 class="text-3xl sm:text-4xl font-bold leading-tight mt-1">Computer Based Test</h2>
+              <div class="lime-underline"></div>
+            </div>
+            <div class="relative z-10 flex justify-center items-center py-12 flex-grow">
+              <div class="login-logo-glass w-32 h-32 sm:w-40 sm:h-40 rounded-2xl flex items-center justify-center p-3">
+                <img src="https://yanuar-moga.github.io/cbt/assets/logo.png" alt="Logo" class="w-full h-full object-contain" style="filter: drop-shadow(0 10px 30px rgba(163,230,53,0.4));" />
+              </div>
+            </div>
+            <div class="relative z-10 max-w-md">
+              <p class="text-blue-100 text-sm leading-relaxed opacity-90">
+                Platform asesmen digital untuk pelaksanaan ujian yang terstruktur, aman, dan mudah digunakan.
+              </p>
             </div>
           </div>
 
-          <button type="submit" class="btn-neon w-full py-3.5 rounded-xl text-base">
-            Masuk
-          </button>
-
-          <button type="button" onclick="backToLayer1()" class="w-full text-center text-blue-200 hover:text-lime-300 text-sm transition">
-            ← Kembali ke Beranda
-          </button>
-        </form>
-
-        <!-- Footer -->
-        <div class="mt-8 text-center">
-          <button onclick="showAppInfo()" class="text-xs text-blue-300 hover:text-lime-300 transition">
-            SCBT Integrated System • v1.0 | Developed by MB
-          </button>
+          <!-- RIGHT: White form panel -->
+          <div class="bg-white p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+            <div class="mb-8 sm:mb-10">
+              <p class="text-slate-400 text-xs font-semibold uppercase tracking-wide">SMART EXAMINATION &amp; VIRTUAL ASSESSMENT</p>
+              <h3 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">SCBT Version 1.0</h3>
+              <div class="lime-underline"></div>
+            </div>
+            <form id="login-form" class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">USERNAME</label>
+                <input id="login-username" type="text" required placeholder="Masukkan Username" autocomplete="off"
+                  class="login-input-elegant w-full px-5 py-3.5 rounded-xl text-slate-700 placeholder-slate-400" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">PASSWORD</label>
+                <div class="relative">
+                  <input id="login-password" type="password" required placeholder="Masukkan Password" autocomplete="off"
+                    class="login-input-elegant w-full px-5 py-3.5 pr-12 rounded-xl text-slate-700 placeholder-slate-400" />
+                  <button type="button" onclick="togglePwd('login-password', this)"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+                    <svg class="w-5 h-5 eye-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="btn-masuk-elegant w-full py-3.5 rounded-xl text-base mt-2">
+                Masuk
+              </button>
+              <button type="button" onclick="backToLayer1()" class="w-full text-center text-slate-500 hover:text-royal-blue text-sm font-medium transition mt-2">
+                ← Kembali ke Beranda
+              </button>
+            </form>
+            <div class="mt-10 sm:mt-12 text-center space-y-2">
+              <button onclick="showAppInfo()" class="text-blue-600 hover:text-blue-800 text-sm font-medium transition">
+                About SCBT Version 1.0
+              </button>
+              <p class="text-slate-400 text-xs">© 2026 All Rights Reserved</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -471,7 +574,7 @@
 
       <div class="mt-6 text-center">
         <button onclick="showAppInfo()" class="text-xs text-slate-400 hover:text-royal-blue transition">
-          SCBT Integrated System • v1.0 | Developed by MB
+          About SCBT Version 1.0
         </button>
       </div>
     </div>
@@ -535,7 +638,7 @@
 
       <div class="mt-6 text-center">
         <button onclick="showAppInfo()" class="text-xs text-slate-400 hover:text-royal-blue transition">
-          SCBT Integrated System • v1.0 | Developed by MB
+          About SCBT Version 1.0
         </button>
       </div>
     </div>
@@ -655,7 +758,7 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-3 text-center">
       <button onclick="showAppInfo()" class="text-xs text-slate-400 hover:text-royal-blue transition">
-        SCBT Integrated System • v1.0 | Developed by MB
+        About SCBT Version 1.0
       </button>
     </footer>
   </section>
@@ -855,7 +958,7 @@
   <div id="modal-info" class="hidden fixed inset-0 z-[10001] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="card max-w-md w-full p-8 fade-in">
       <div class="text-center mb-6">
-        <img src="https://yanuar-moga.github.io/cbt/assets/sevia.png" class="w-20 h-20 mx-auto rounded-2xl mb-3" alt="Logo" />
+        <img src="https://yanuar-moga.github.io/cbt/assets/sevia.png" style="max-height: 80px; max-width: 80%; width: auto; height: auto; margin: 0 auto 12px; object-fit: contain; display: block;" alt="SEVIA Logo" />
         <h3 class="text-xl font-extrabold text-slate-900">SCBT Integrated System</h3>
         <p class="text-slate-500 text-sm">Smart Examination &amp; Virtual Assessment (SEVIA)</p>
       </div>
