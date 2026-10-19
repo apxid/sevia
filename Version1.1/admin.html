@@ -278,7 +278,7 @@
         </form>
         <div class="mt-10 pt-6 border-t border-slate-100 text-center">
           <button onclick="showAppInfo()" class="text-xs text-slate-400 hover:text-royal-blue transition">
-            About SCBT Version 1.0
+            About SCBT Version 1.1
           </button>
         </div>
       </div>
@@ -679,12 +679,99 @@
             </div>
           </div>
         </div>
-          </main>
+          
+        <!-- Tab: Generate Token -->
+        <div id="tab-gen-token" class="hidden space-y-4">
+          <div><h2 class="text-2xl font-extrabold text-slate-900">Generate Token Siswa</h2><p class="text-slate-500 text-sm">Generate token ujian untuk siswa tertentu atau massal. Token bisa custom atau otomatis.</p></div>
+          <div class="card p-6">
+            <h3 class="font-bold text-slate-900 mb-4">Generate Token untuk Siswa</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Target Siswa</label>
+                <select id="gen-token-siswa" class="input-field w-full px-3 py-2.5 rounded-xl text-sm">
+                  <option value="">— Pilih Siswa —</option>
+                  <option value="ALL">📊 Semua Siswa (Massal)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Mode Token</label>
+                <div class="grid sm:grid-cols-2 gap-3">
+                  <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-lime-400 transition">
+                    <input type="radio" id="token-mode-auto" name="token-gen-mode" value="auto" class="w-4 h-4 accent-lime-500" checked />
+                    <div><div class="font-bold text-slate-900 text-sm">⚡ Otomatis</div><div class="text-xs text-slate-500">Format: TKN-XXXX-2025</div></div>
+                  </label>
+                  <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-lime-400 transition">
+                    <input type="radio" id="token-mode-custom" name="token-gen-mode" value="custom" class="w-4 h-4 accent-lime-500" />
+                    <div><div class="font-bold text-slate-900 text-sm">✏️ Custom</div><div class="text-xs text-slate-500">Tentukan nama token sendiri</div></div>
+                  </label>
+                </div>
+              </div>
+              <div id="custom-token-section" class="hidden">
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Token Custom</label>
+                <input id="custom-token-value" type="text" placeholder="cth: UJIAN-TKA-2025" class="input-field w-full px-4 py-3 rounded-xl text-sm font-mono" />
+              </div>
+              <div id="auto-token-section">
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Prefix Token (opsional)</label>
+                <input id="token-prefix" type="text" placeholder="cth: TKN, UJIAN, TKA (default: TKN)" value="TKN" class="input-field w-full px-4 py-2 rounded-xl text-sm font-mono" />
+              </div>
+              <button onclick="generateTokenAdmin()" class="btn-neon px-6 py-2.5 rounded-xl text-sm">⚡ Generate Token</button>
+            </div>
+            <div id="gen-token-result" class="hidden mt-6 p-4 rounded-xl bg-lime-50 border border-lime-300">
+              <div class="font-bold text-lime-800 mb-2">✅ Token Berhasil Dibuat</div>
+              <div id="gen-token-list" class="space-y-1 text-sm text-slate-700 font-mono"></div>
+              <button onclick="copyAllTokens()" class="mt-3 btn-royal px-4 py-2 rounded-lg text-sm">📋 Salin Semua</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Pengaturan Soal -->
+        <div id="tab-soal-setting" class="hidden space-y-4">
+          <div><h2 class="text-2xl font-extrabold text-slate-900">Pengaturan Soal Ujian</h2><p class="text-slate-500 text-sm">Tentukan default mode soal untuk seluruh ujian. Proctor dapat mengubah pengaturan ini per ruangan.</p></div>
+          <div class="card p-6">
+            <h3 class="font-bold text-slate-900 mb-4">Mode Soal Default (Berlaku untuk Semua Ruangan)</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Mode Soal:</label>
+                <div class="grid sm:grid-cols-2 gap-3">
+                  <label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-lime-400 transition">
+                    <input type="radio" id="mode-cbt" name="soal-mode" value="cbt" class="w-4 h-4 accent-lime-500" checked />
+                    <div><div class="font-bold text-slate-900 text-sm">📝 Sistem CBT SEVIA</div><div class="text-xs text-slate-500 mt-0.5">Soal dari spreadsheet, dikerjakan di halaman ujian</div></div>
+                  </label>
+                  <label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-200 cursor-pointer hover:border-lime-400 transition">
+                    <input type="radio" id="mode-gform" name="soal-mode" value="gform" class="w-4 h-4 accent-lime-500" />
+                    <div><div class="font-bold text-slate-900 text-sm">📋 Google Form</div><div class="text-xs text-slate-500 mt-0.5">Soal dari Google Form, di-embed di halaman ujian</div></div>
+                  </label>
+                </div>
+              </div>
+              <div id="cbt-soal-section" class="hidden">
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Pilih Paket Soal:</label>
+                <select id="soal-id-select" class="input-field w-full px-3 py-2.5 rounded-xl text-sm">
+                  <option value="">— Pilih Paket Soal —</option>
+                </select>
+                <p class="text-xs text-slate-400 mt-1">Paket soal dibuat oleh guru via halaman Editor Soal (soal.html)</p>
+              </div>
+              <div id="gform-url-section" class="hidden">
+                <label class="block text-sm font-semibold text-slate-700 mb-2">URL Google Form (embed)</label>
+                <input id="gform-url-input" type="text" placeholder="https://docs.google.com/forms/d/e/XXXX/viewform?embedded=true" class="input-field w-full px-4 py-3 rounded-xl text-sm font-mono" />
+                <p class="text-xs text-slate-400 mt-1">Gunakan URL Google Form dengan parameter <code>?embedded=true</code></p>
+              </div>
+              <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <div class="text-sm text-blue-800">
+                  <strong>Info:</strong> Pengaturan ini adalah <strong>default</strong> untuk semua ruangan.
+                  Proctor dapat mengubah mode soal per ruangan dari halaman Proctor → tab "Pengaturan Soal".
+                </div>
+              </div>
+              <button onclick="saveSoalModeAdmin()" class="btn-neon px-6 py-2.5 rounded-xl text-sm">Simpan Pengaturan Default</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
     
     <!-- Footer dashboard -->
     <footer class="bg-white border-t border-slate-200 py-3 text-center">
       <button onclick="showAppInfo()" class="text-xs text-slate-400 hover:text-royal-blue transition">
-        About SCBT Version 1.0
+        About SCBT Version 1.1
       </button>
     </footer>
   </div>
@@ -2141,187 +2228,6 @@
       });
     }
 
-
-    /* ============================================================
-       PENGATURAN SOAL — Admin set default, Proctor bisa override
-       ============================================================ */
-    async function loadSoalMode() {
-      try {
-        const res = await apiCall('getSoalMode', {});
-        if (res.success) {
-          if (res.mode === 'gform') {
-            document.getElementById('mode-gform').checked = true;
-            document.getElementById('gform-url-input').value = res.gform_url || '';
-            showGformSection();
-          } else {
-            document.getElementById('mode-cbt').checked = true;
-            if (res.soal_id) {
-              await loadSoalOptions(res.soal_id);
-            }
-            showCbtSection();
-          }
-        }
-      } catch (e) {
-        console.warn('Gagal load soal mode:', e);
-      }
-    }
-
-    async function loadSoalOptions(selectedId) {
-      try {
-        const res = await apiCall('getAllSoal', {});
-        if (res.success && res.soal) {
-          const sel = document.getElementById('soal-id-select');
-          sel.innerHTML = '<option value="">— Pilih Paket Soal —</option>';
-          res.soal.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s.id;
-            var label = s.nama_paket || (s.mata_pelajaran + ' • ' + (s.tipe || 'pg'));
-            opt.textContent = label + ' (' + (s.jumlah_soal || '?') + ' soal)';
-            if (s.id === selectedId) opt.selected = true;
-            sel.appendChild(opt);
-          });
-        }
-      } catch (e) {
-        console.warn('Gagal load soal options:', e);
-      }
-    }
-
-    function showCbtSection() {
-      document.getElementById('cbt-soal-section').classList.remove('hidden');
-      document.getElementById('gform-url-section').classList.add('hidden');
-    }
-
-    function showGformSection() {
-      document.getElementById('cbt-soal-section').classList.add('hidden');
-      document.getElementById('gform-url-section').classList.remove('hidden');
-    }
-
-    // Listener untuk radio button
-    document.addEventListener('DOMContentLoaded', function() {
-      const cbtRadio = document.getElementById('mode-cbt');
-      const gformRadio = document.getElementById('mode-gform');
-      if (cbtRadio) cbtRadio.addEventListener('change', showCbtSection);
-      if (gformRadio) gformRadio.addEventListener('change', showGformSection);
-    });
-
-    async function saveSoalModeAdmin() {
-      const mode = document.querySelector('input[name="soal-mode"]:checked')?.value || 'cbt';
-      const soalId = mode === 'cbt' ? (document.getElementById('soal-id-select')?.value || '') : '';
-      const gformUrl = mode === 'gform' ? (document.getElementById('gform-url-input')?.value || '') : '';
-      
-      const res = await apiCall('saveSoalMode', {
-        ruangan: '', // Admin = default
-        mode: mode,
-        soal_id: soalId,
-        gform_url: gformUrl
-      });
-      if (res.success) {
-        showToast('Pengaturan soal default tersimpan!', 'success');
-      } else {
-        showToast(res.error || 'Gagal simpan', 'error');
-      }
-    }
-
-
-    /* ============================================================
-       GENERATE TOKEN — Admin & Proctor bisa generate custom
-       ============================================================ */
-
-    async function loadTokenSiswaList() {
-      try {
-        const res = await apiCall('getAllSiswa', {});
-        if (res.success && res.siswa) {
-          tokenSiswaList = res.siswa;
-          const sel = document.getElementById('gen-token-siswa');
-          if (!sel) return;
-          sel.innerHTML = '<option value="">— Pilih Siswa —</option><option value="ALL">📊 Semua Siswa (Massal)</option>';
-          res.siswa.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s.username;
-            opt.textContent = s.nama_lengkap + ' (' + s.username + ') — Token: ' + (s.token_ujian || 'belum ada');
-            sel.appendChild(opt);
-          });
-        }
-      } catch (e) { console.warn('Gagal load siswa untuk token:', e); }
-    }
-
-    // Toggle custom/auto
-    document.addEventListener('DOMContentLoaded', function() {
-      const autoRadio = document.getElementById('token-mode-auto');
-      const customRadio = document.getElementById('token-mode-custom');
-      if (autoRadio) autoRadio.addEventListener('change', function() {
-        document.getElementById('custom-token-section').classList.add('hidden');
-        document.getElementById('auto-token-section').classList.remove('hidden');
-      });
-      if (customRadio) customRadio.addEventListener('change', function() {
-        document.getElementById('custom-token-section').classList.remove('hidden');
-        document.getElementById('auto-token-section').classList.add('hidden');
-      });
-    });
-
-    function genRandomToken(prefix) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let s = '';
-      for (let i = 0; i < 4; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
-      return (prefix || 'TKN') + '-' + s + '-' + new Date().getFullYear();
-    }
-
-    async function generateTokenAdmin() {
-      const target = document.getElementById('gen-token-siswa')?.value || '';
-      if (!target) { showToast('Pilih siswa atau "Semua Siswa" dulu.', 'error'); return; }
-      
-      const mode = document.querySelector('input[name="token-gen-mode"]:checked')?.value || 'auto';
-      const customToken = document.getElementById('custom-token-value')?.value || '';
-      const prefix = document.getElementById('token-prefix')?.value || 'TKN';
-      
-      if (mode === 'custom' && !customToken) {
-        showToast('Isi token custom dulu.', 'error'); return;
-      }
-      
-      const ok = await showConfirm(
-        target === 'ALL' ? 'Generate token untuk SEMUA siswa?' : 'Generate token untuk siswa ini?',
-        { title: 'Generate Token?', confirmText: 'Ya, Generate', type: 'question' }
-      );
-      if (!ok) return;
-      
-      const resultDiv = document.getElementById('gen-token-result');
-      const listDiv = document.getElementById('gen-token-list');
-      resultDiv.classList.add('hidden');
-      
-      if (target === 'ALL') {
-        // Massal
-        const results = [];
-        for (const s of tokenSiswaList) {
-          const token = mode === 'custom' ? customToken : genRandomToken(prefix);
-          const res = await apiCall('generateTokenSiswa', { username: s.username, token: token });
-          if (res.success) {
-            results.push({ username: s.username, nama: s.nama_lengkap, token: token });
-          }
-        }
-        listDiv.innerHTML = results.map(r => `<div>✓ ${r.nama} (${r.username}) → <strong>${r.token}</strong></div>`).join('');
-        resultDiv.classList.remove('hidden');
-        showToast(`Berhasil generate ${results.length} token!`, 'success');
-      } else {
-        // Per siswa
-        const token = mode === 'custom' ? customToken : genRandomToken(prefix);
-        const res = await apiCall('generateTokenSiswa', { username: target, token: token });
-        if (res.success) {
-          listDiv.innerHTML = `<div>✓ Token baru: <strong>${res.token || token}</strong></div>`;
-          resultDiv.classList.remove('hidden');
-          showToast('Token berhasil dibuat!', 'success');
-          loadTokenSiswaList(); // refresh dropdown
-        } else {
-          showToast(res.error || 'Gagal generate token', 'error');
-        }
-      }
-    }
-
-    function copyAllTokens() {
-      const list = document.getElementById('gen-token-list');
-      if (!list) return;
-      const text = list.innerText;
-      navigator.clipboard.writeText(text).then(() => showToast('Token disalin ke clipboard!', 'success'));
-    }
 
     /* ============================================================
        DAFTAR HADIR PANITIA (Teknisi, Proktor, Pengawas)
