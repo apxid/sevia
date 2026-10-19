@@ -1484,31 +1484,69 @@
       if (!q) return;
       document.getElementById('q-number').textContent = state.currentQuestion + 1;
       document.getElementById('q-mapel').textContent = q.mata_pelajaran || '—';
-      document.getElementById('q-text').textContent = q.pertanyaan;
+      
+      // Render pertanyaan + gambar soal (jika ada)
+      const qText = document.getElementById('q-text');
+      let pertanyaanHTML = q.pertanyaan || '';
+      if (q.gambar_soal) {
+        pertanyaanHTML += '<br><img src="' + q.gambar_soal + '" class="mt-3 rounded-xl max-w-full max-h-60 mx-auto" alt="Gambar Soal" />';
+      }
+      qText.innerHTML = pertanyaanHTML;
 
       const c = document.getElementById('q-options');
       c.innerHTML = '';
-      const opts = [
-        { l: 'A', t: q.opsi_a }, { l: 'B', t: q.opsi_b },
-        { l: 'C', t: q.opsi_c }, { l: 'D', t: q.opsi_d }
-      ];
-      opts.forEach(o => {
-        if (!o.t) return;
+      
+      // Cek tipe soal
+      const tipe = q.tipe_soal || 'pg';
+      
+      if (tipe === 'uraian') {
+        // Soal uraian — tampilkan textarea
         const d = document.createElement('div');
-        d.className = 'opt rounded-xl p-4 flex items-center gap-3 cursor-pointer transition border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50';
-        if (state.answers[q.id_soal] === o.l) {
-          d.classList.add('border-lime-500', 'bg-lime-50');
-          d.classList.remove('border-slate-200');
-        }
-        d.innerHTML = `<div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-600 flex-shrink-0">${o.l}</div><div class="flex-1 text-slate-800">${o.t}</div>`;
-        d.addEventListener('click', () => {
-          state.answers[q.id_soal] = o.l;
+        d.className = 'space-y-2';
+        d.innerHTML = '<label class="block text-sm font-semibold text-slate-700">Jawaban Anda:</label>' +
+          '<textarea id="jawaban-uraian" rows="6" placeholder="Tulis jawaban Anda di sini..." ' +
+          'class="input-field w-full px-4 py-3 rounded-xl resize-none">' +
+          (state.answers[q.id_soal] || '') +
+          '</textarea>';
+        c.appendChild(d);
+        const ta = document.getElementById('jawaban-uraian');
+        if (ta) ta.addEventListener('input', function() {
+          state.answers[q.id_soal] = ta.value;
           saveSession(Object.assign(loadSession() || {}, { answers: state.answers }));
-          renderQuestion();
           renderNav();
         });
-        c.appendChild(d);
-      });
+      } else {
+        // Soal PG / sebab-akibat — tampilkan opsi A-E
+        const opts = [
+          { l: 'A', t: q.opsi_a, g: q.gambar_a },
+          { l: 'B', t: q.opsi_b, g: q.gambar_b },
+          { l: 'C', t: q.opsi_c, g: q.gambar_c },
+          { l: 'D', t: q.opsi_d, g: q.gambar_d },
+          { l: 'E', t: q.opsi_e, g: q.gambar_e }
+        ];
+        opts.forEach(o => {
+          if (!o.t && !o.g) return;
+          const d = document.createElement('div');
+          d.className = 'opt rounded-xl p-4 flex items-center gap-3 cursor-pointer transition border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+          if (state.answers[q.id_soal] === o.l) {
+            d.classList.add('border-lime-500', 'bg-lime-50');
+            d.classList.remove('border-slate-200');
+          }
+          let opsiHTML = '<div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-600 flex-shrink-0">' + o.l + '</div>';
+          opsiHTML += '<div class="flex-1 text-slate-800">';
+          if (o.t) opsiHTML += '<span>' + o.t + '</span>';
+          if (o.g) opsiHTML += '<br><img src="' + o.g + '" class="mt-2 rounded-lg max-w-full max-h-40" alt="Opsi ' + o.l + '" />';
+          opsiHTML += '</div>';
+          d.innerHTML = opsiHTML;
+          d.addEventListener('click', () => {
+            state.answers[q.id_soal] = o.l;
+            saveSession(Object.assign(loadSession() || {}, { answers: state.answers }));
+            renderQuestion();
+            renderNav();
+          });
+          c.appendChild(d);
+        });
+      }
 
       document.getElementById('btn-prev').disabled = state.currentQuestion === 0;
       document.getElementById('btn-next').textContent = state.currentQuestion === state.questions.length - 1 ? 'Selesai →' : 'Berikutnya →';
