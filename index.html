@@ -5,27 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="SCBT - Computer Based Test Platform (SEVIA)" />
   <title>SCBT - Peserta Ujian</title>
-  <script src="https://cdn.tailwindcss.com">
-    /* ============================================================
-       ENTER KEY TRIGGER — Submit form dengan tekan Enter
-       ============================================================ */
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'textarea') {
-        var form = e.target.closest('form');
-        if (form) {
-          e.preventDefault();
-          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-        }
-      }
-    });
-  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="https://yanuar-moga.github.io/cbt/assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     /* ============================================================
-       DESIGN SYSTEM — SCBT v1.1 (SEVIA: Smart Examination & Virtual Assessment v1.1)
+       DESIGN SYSTEM — SCBT v1.0 (SEVIA: Smart Examination & Virtual Assessment)
        Royal Blue / Bright Neon Lime / Clean White / Dark Slate
        ============================================================ */
     :root {
@@ -429,7 +416,7 @@
              class="w-28 h-28 sm:w-36 sm:h-36 logo-3d rounded-3xl bg-white/10 p-2 backdrop-blur mb-8" />
 
         <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-3">
-          Selamat Datang di <span class="text-lime-300">SCBT</span>
+          Selamat Datang di <span class="text-lime-300">Platform SCBT</span>
         </h1>
         <p class="text-blue-100 text-lg sm:text-xl leading-relaxed mb-3 max-w-xl">
           Aplikasi Computer Based Test yang aman, andal, dan mudah digunakan.
@@ -448,7 +435,7 @@
           </svg>
           Mulai
         </button>
-        <p class="text-blue-300 text-xs mt-3">Klik "Mulai" untuk masuk mode fullscreen &amp; melanjutkan ke halaman login</p>
+        <p class="text-blue-300 text-xs mt-3">Klik "Mulai" untuk masuk &amp; lanjut ke halaman login</p>
 
         <!-- Fallback: jika fullscreen tidak aktif, tombol ini akan muncul -->
         <button onclick="requestFullscreenAsync()" id="btn-manual-fullscreen"
@@ -476,11 +463,11 @@
       <!-- Footer (clickable → about popup) -->
       <footer class="w-full text-center pt-6 mt-8 border-t border-white/10">
         <button onclick="showAppInfo()" class="text-blue-200 hover:text-lime-300 transition text-sm font-medium">
-          SCBT • SEVIA • Smart Examination & Virtual Assessment
+         SEVIA • Smart Examination & Virtual Assessment
         </button>
         <div class="text-blue-300 text-xs mt-1">
-          <button onclick="showAppInfo()" class="hover:text-lime-300 underline-offset-2 hover:underline">
-            About SCBT Version 1.0
+      <button disabled class="underline-offset-2 pointer-events-none cursor-not-allowed opacity-50">
+            Version 1.0 Build 4 Oktober 2026
           </button>
         </div>
       </footer>
@@ -986,8 +973,8 @@
       </div>
       <div class="space-y-3 text-sm">
         <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Pengembang</span><span class="font-semibold text-slate-900">MB</span></div>
-        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Build</span><span class="font-mono text-slate-900">2025.10.03</span></div>
-        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Versi</span><span class="font-mono text-slate-900">v1.1</span></div>
+        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Build</span><span class="font-mono text-slate-900">4 Oktober 2026</span></div>
+        <div class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-500">Versi</span><span class="font-mono text-slate-900">Ver 1.0</span></div>
         <div class="flex justify-between py-2"><span class="text-slate-500">Kontak Email</span><a href="mailto:yanuar.b@gmail.com" class="font-semibold text-royal-blue hover:underline">yanuar.b@gmail.com</a></div>
       </div>
       <button onclick="closeAppInfo()" class="btn-royal w-full py-3 rounded-xl mt-6">Tutup</button>
@@ -1005,13 +992,13 @@
        SOAL_URL: URL Google Form / external soal (opsional)
        ============================================================ */
     const CONFIG = {
-      WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbx8_t8p1GYL0g59UxBPROgSxXe1lYkr8JYIiL2zglMlPxS6FZhEBsSyEEVvx-Q-snHW/exec',  // kosong = mode demo (data lokal)
+      WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbyA2tNmgLYqPvr6QXDK0C-7sU5HsVTaiCwHPVi7RXZas-K3hBbh-zyOv4aXQK5w2GnYvQ/exec',  // kosong = mode demo (data lokal)
       SOAL_URL: '',     // Isi dengan URL Google Form jika soal external (cth: 'https://docs.google.com/forms/...')
       LOGO: 'https://yanuar-moga.github.io/cbt/assets/logo.png',
       APP_NAME: 'SCBT',
       FULL_NAME: 'SCBT Integrated System (SEVIA)',
       TAGLINE: 'Smart Examination & Virtual Assessment',
-      VERSION: 'v1.1',
+      VERSION: 'v1.0',
       DEVELOPER: 'MB',
       EMAIL: 'yanuar.b@gmail.com'
     };
@@ -1405,32 +1392,15 @@
       state.examStarted = true;
       state.examEndTime = Date.now() + 90 * 60 * 1000; // 90 minutes
 
-      // Cek mode soal dari backend (admin/proctor setting)
-      let useExternal = false;
-      let soalUrl = '';
-      
-      try {
-        const modeRes = await apiCall('getSoalMode', { ruangan: state.siswa.ruangan || '' });
-        if (modeRes.success && modeRes.mode === 'gform' && modeRes.gform_url) {
-          useExternal = true;
-          soalUrl = modeRes.gform_url;
-        }
-      } catch (e) {
-        console.warn('Gagal cek soal mode, fallback ke CONFIG.SOAL_URL:', e);
-        // Fallback ke CONFIG.SOAL_URL (hardcode lama)
-        if (CONFIG.SOAL_URL) {
-          useExternal = true;
-          soalUrl = CONFIG.SOAL_URL;
-        }
-      }
-
+      // Determine exam mode
+      const useExternal = !!CONFIG.SOAL_URL;
       if (useExternal) {
         // MODE 1: External Google Form / URL
         document.getElementById('exam-external').classList.remove('hidden');
         document.getElementById('exam-native').classList.add('hidden');
         const iframe = document.getElementById('exam-iframe');
-        iframe.src = soalUrl;
-        document.getElementById('exam-external-link').href = soalUrl;
+        iframe.src = CONFIG.SOAL_URL;
+        document.getElementById('exam-external-link').href = CONFIG.SOAL_URL;
       } else {
         // MODE 2: Built-in question bank
         document.getElementById('exam-external').classList.add('hidden');
@@ -1484,69 +1454,31 @@
       if (!q) return;
       document.getElementById('q-number').textContent = state.currentQuestion + 1;
       document.getElementById('q-mapel').textContent = q.mata_pelajaran || '—';
-      
-      // Render pertanyaan + gambar soal (jika ada)
-      const qText = document.getElementById('q-text');
-      let pertanyaanHTML = q.pertanyaan || '';
-      if (q.gambar_soal) {
-        pertanyaanHTML += '<br><img src="' + q.gambar_soal + '" class="mt-3 rounded-xl max-w-full max-h-60 mx-auto" alt="Gambar Soal" />';
-      }
-      qText.innerHTML = pertanyaanHTML;
+      document.getElementById('q-text').textContent = q.pertanyaan;
 
       const c = document.getElementById('q-options');
       c.innerHTML = '';
-      
-      // Cek tipe soal
-      const tipe = q.tipe_soal || 'pg';
-      
-      if (tipe === 'uraian') {
-        // Soal uraian — tampilkan textarea
+      const opts = [
+        { l: 'A', t: q.opsi_a }, { l: 'B', t: q.opsi_b },
+        { l: 'C', t: q.opsi_c }, { l: 'D', t: q.opsi_d }
+      ];
+      opts.forEach(o => {
+        if (!o.t) return;
         const d = document.createElement('div');
-        d.className = 'space-y-2';
-        d.innerHTML = '<label class="block text-sm font-semibold text-slate-700">Jawaban Anda:</label>' +
-          '<textarea id="jawaban-uraian" rows="6" placeholder="Tulis jawaban Anda di sini..." ' +
-          'class="input-field w-full px-4 py-3 rounded-xl resize-none">' +
-          (state.answers[q.id_soal] || '') +
-          '</textarea>';
-        c.appendChild(d);
-        const ta = document.getElementById('jawaban-uraian');
-        if (ta) ta.addEventListener('input', function() {
-          state.answers[q.id_soal] = ta.value;
+        d.className = 'opt rounded-xl p-4 flex items-center gap-3 cursor-pointer transition border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+        if (state.answers[q.id_soal] === o.l) {
+          d.classList.add('border-lime-500', 'bg-lime-50');
+          d.classList.remove('border-slate-200');
+        }
+        d.innerHTML = `<div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-600 flex-shrink-0">${o.l}</div><div class="flex-1 text-slate-800">${o.t}</div>`;
+        d.addEventListener('click', () => {
+          state.answers[q.id_soal] = o.l;
           saveSession(Object.assign(loadSession() || {}, { answers: state.answers }));
+          renderQuestion();
           renderNav();
         });
-      } else {
-        // Soal PG / sebab-akibat — tampilkan opsi A-E
-        const opts = [
-          { l: 'A', t: q.opsi_a, g: q.gambar_a },
-          { l: 'B', t: q.opsi_b, g: q.gambar_b },
-          { l: 'C', t: q.opsi_c, g: q.gambar_c },
-          { l: 'D', t: q.opsi_d, g: q.gambar_d },
-          { l: 'E', t: q.opsi_e, g: q.gambar_e }
-        ];
-        opts.forEach(o => {
-          if (!o.t && !o.g) return;
-          const d = document.createElement('div');
-          d.className = 'opt rounded-xl p-4 flex items-center gap-3 cursor-pointer transition border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50';
-          if (state.answers[q.id_soal] === o.l) {
-            d.classList.add('border-lime-500', 'bg-lime-50');
-            d.classList.remove('border-slate-200');
-          }
-          let opsiHTML = '<div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-slate-600 flex-shrink-0">' + o.l + '</div>';
-          opsiHTML += '<div class="flex-1 text-slate-800">';
-          if (o.t) opsiHTML += '<span>' + o.t + '</span>';
-          if (o.g) opsiHTML += '<br><img src="' + o.g + '" class="mt-2 rounded-lg max-w-full max-h-40" alt="Opsi ' + o.l + '" />';
-          opsiHTML += '</div>';
-          d.innerHTML = opsiHTML;
-          d.addEventListener('click', () => {
-            state.answers[q.id_soal] = o.l;
-            saveSession(Object.assign(loadSession() || {}, { answers: state.answers }));
-            renderQuestion();
-            renderNav();
-          });
-          c.appendChild(d);
-        });
-      }
+        c.appendChild(d);
+      });
 
       document.getElementById('btn-prev').disabled = state.currentQuestion === 0;
       document.getElementById('btn-next').textContent = state.currentQuestion === state.questions.length - 1 ? 'Selesai →' : 'Berikutnya →';
@@ -1869,7 +1801,7 @@
     /* ============================================================
        SESSION RESTORATION (page refresh)
        ============================================================ */
-    async function restoreSession() {
+    function restoreSession() {
       const saved = loadSession();
       if (!saved || !saved.siswa) return;
 
@@ -1892,24 +1824,11 @@
         state.answers = saved.answers || {};
         state.isLocked = saved.isLocked || false;
 
-        // Cek mode soal dari backend
-        let useExternal2 = false;
-        let soalUrl2 = '';
-        try {
-          const modeRes2 = await apiCall('getSoalMode', { ruangan: saved.siswa.ruangan || '' });
-          if (modeRes2.success && modeRes2.mode === 'gform' && modeRes2.gform_url) {
-            useExternal2 = true;
-            soalUrl2 = modeRes2.gform_url;
-          }
-        } catch (e) {
-          if (CONFIG.SOAL_URL) { useExternal2 = true; soalUrl2 = CONFIG.SOAL_URL; }
-        }
-        
-        if (useExternal2) {
+        if (CONFIG.SOAL_URL) {
           document.getElementById('exam-external').classList.remove('hidden');
           document.getElementById('exam-native').classList.add('hidden');
-          document.getElementById('exam-iframe').src = soalUrl2;
-          document.getElementById('exam-external-link').href = soalUrl2;
+          document.getElementById('exam-iframe').src = CONFIG.SOAL_URL;
+          document.getElementById('exam-external-link').href = CONFIG.SOAL_URL;
         } else {
           document.getElementById('exam-external').classList.add('hidden');
           document.getElementById('exam-native').classList.remove('hidden');
@@ -1939,19 +1858,6 @@
        ============================================================ */
     document.addEventListener('DOMContentLoaded', () => {
       restoreSession();
-    });
-  
-    /* ============================================================
-       ENTER KEY TRIGGER — Submit form dengan tekan Enter
-       ============================================================ */
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'textarea') {
-        var form = e.target.closest('form');
-        if (form) {
-          e.preventDefault();
-          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-        }
-      }
     });
   </script>
 </body>
