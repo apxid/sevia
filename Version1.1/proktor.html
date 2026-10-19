@@ -755,7 +755,10 @@
           user: { username: p.username, nama: 'Demo Proctor (' + p.username + ')', ruangan: 'Ruang A-101', sesi: 'Sesi 1', token_proctor: 'PRC-DEMO-2025', role: 'proctor' } };
       }
       if (action === 'getSiswaByProctor') return { success: true, siswa: DEMO_SISWA };
-      if (action === 'generateTokenSiswa') return { success: true, token: 'TKN-' + Math.random().toString(36).substr(2,8).toUpperCase() + '-2025' };
+      if (action === 'generateTokenSiswa') {
+        const token = p.token || ('TKN-' + Math.random().toString(36).substr(2,8).toUpperCase() + '-2025');
+        return { success: true, token: token };
+      }
       if (action === 'unblockSiswa') { const s = DEMO_SISWA.find(x => x.username === p.username); if (s) s.status_ujian = 'sedang_mengerjakan'; return { success: true }; }
       if (action === 'resetLoginSiswa') { const s = DEMO_SISWA.find(x => x.username === p.username); if (s) { s.status_login = 'belum_login'; s.status_ujian = 'belum_mulai'; s.waktu_mulai = ''; } return { success: true }; }
       if (action === 'resetLoginMassal') { DEMO_SISWA.forEach(s => { s.status_login = 'belum_login'; s.status_ujian = 'belum_mulai'; s.waktu_mulai = ''; }); return { success: true, reset_count: DEMO_SISWA.length }; }
@@ -1072,12 +1075,43 @@
     /* ============================================================
        GENERATE TOKEN
        ============================================================ */
+    // Toggle custom/auto di proktor
+    document.addEventListener('DOMContentLoaded', function() {
+      const auto = document.getElementById('ptoken-mode-auto');
+      const custom = document.getElementById('ptoken-mode-custom');
+      if (auto) auto.addEventListener('change', function() {
+        document.getElementById('ptoken-custom-section').classList.add('hidden');
+        document.getElementById('ptoken-auto-section').classList.remove('hidden');
+      });
+      if (custom) custom.addEventListener('change', function() {
+        document.getElementById('ptoken-custom-section').classList.remove('hidden');
+        document.getElementById('ptoken-auto-section').classList.add('hidden');
+      });
+    });
+
+    function genRandomTokenProctor(prefix) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let s = '';
+      for (let i = 0; i < 4; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+      return (prefix || 'TKN') + '-' + s + '-' + new Date().getFullYear();
+    }
+
     async function generateToken() {
       const username = document.getElementById('token-username').value.trim();
       if (!username) { showToast('Masukkan username siswa.', 'error'); return; }
-      const res = await apiCall('generateTokenSiswa', { username });
+      
+      const mode = document.querySelector('input[name="ptoken-mode"]:checked')?.value || 'auto';
+      const customToken = document.getElementById('ptoken-custom-value')?.value || '';
+      const prefix = document.getElementById('ptoken-prefix')?.value || 'TKN';
+      
+      if (mode === 'custom' && !customToken) {
+        showToast('Isi token custom dulu.', 'error'); return;
+      }
+      
+      const token = mode === 'custom' ? customToken : genRandomTokenProctor(prefix);
+      const res = await apiCall('generateTokenSiswa', { username: username, token: token });
       if (res.success) {
-        document.getElementById('token-display').textContent = res.token;
+        document.getElementById('token-display').textContent = res.token || token;
         document.getElementById('token-result').classList.remove('hidden');
         showToast('Token baru berhasil dibuat!', 'success');
       } else showToast(res.error || 'Gagal generate token', 'error');
@@ -1404,7 +1438,8 @@
           res.soal.forEach(s => {
             const opt = document.createElement('option');
             opt.value = s.id;
-            opt.textContent = s.mata_pelajaran + ' • ' + (s.tipe || 'pg') + ' • ' + (s.jumlah_soal || '?') + ' soal';
+            var label = s.nama_paket || (s.mata_pelajaran + ' • ' + (s.tipe || 'pg'));
+            opt.textContent = label + ' (' + (s.jumlah_soal || '?') + ' soal)';
             if (s.id === selectedId) opt.selected = true;
             sel.appendChild(opt);
           });
