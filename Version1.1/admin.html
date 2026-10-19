@@ -336,7 +336,11 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
             Cetak Kartu Ujian
           </button>
-          <button onclick="navTo('soal-setting')" data-nav="soal-setting" class="nav-item w-full text-left px-4 py-2.5 rounded-lg text-sm flex items-center gap-3">
+          <button onclick="navTo('gen-token')" data-nav="gen-token" class="nav-item w-full text-left px-4 py-2.5 rounded-lg text-sm flex items-center gap-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            Generate Token
+          </button>
+          <button onclick="navTo('soal-setting')" data-nav="soal-setting"  class="nav-item w-full text-left px-4 py-2.5 rounded-lg text-sm flex items-center gap-3">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
             Pengaturan Soal
           </button>
@@ -887,6 +891,10 @@
         const sesi = DEMO_SESI.find(x => x.nama_sesi === s?.sesi);
         return { success: true, siswa: s, sesi };
       }
+      if (action === 'generateTokenSiswa') {
+        const token = p.token || ('TKN-' + Math.random().toString(36).substr(2,8).toUpperCase() + '-2025');
+        return { success: true, token: token };
+      }
       if (action === 'getSoalMode') {
         return { success: true, mode: 'cbt', gform_url: '', soal_id: '', source: 'default' };
       }
@@ -986,7 +994,7 @@
     function closeAppInfo() { document.getElementById('modal-info').classList.add('hidden'); }
 
     function navTo(tab) {
-      ['dashboard', 'proctor', 'sesi', 'token', 'kartu', 'soal-setting', 'hadir', 'panitia'].forEach(t => {
+      ['dashboard', 'proctor', 'sesi', 'token', 'kartu', 'gen-token', 'soal-setting', 'hadir', 'panitia'].forEach(t => {
         document.getElementById('tab-' + t).classList.add('hidden');
         document.querySelector(`[data-nav="${t}"]`).classList.remove('active');
       });
@@ -996,6 +1004,7 @@
       if (tab === 'sesi') loadSesi();
       if (tab === 'token') loadTokens();
       if (tab === 'kartu') loadKartu();
+      if (tab === 'gen-token') loadTokenSiswaList();
       if (tab === 'soal-setting') loadSoalMode();
       if (tab === 'hadir') { loadHadir(); loadKopConfig(); }
       if (tab === 'panitia') { loadKopConfig(); loadPanitiaData(); }
@@ -1676,7 +1685,8 @@
           res.soal.forEach(s => {
             const opt = document.createElement('option');
             opt.value = s.id;
-            opt.textContent = s.mata_pelajaran + ' • ' + (s.tipe || 'pg') + ' • ' + (s.jumlah_soal || '?') + ' soal';
+            var label = s.nama_paket || (s.mata_pelajaran + ' • ' + (s.tipe || 'pg'));
+            opt.textContent = label + ' (' + (s.jumlah_soal || '?') + ' soal)';
             if (s.id === selectedId) opt.selected = true;
             sel.appendChild(opt);
           });
@@ -1720,6 +1730,108 @@
       } else {
         showToast(res.error || 'Gagal simpan', 'error');
       }
+    }
+
+
+    /* ============================================================
+       GENERATE TOKEN — Admin & Proctor bisa generate custom
+       ============================================================ */
+    let tokenSiswaList = [];
+
+    async function loadTokenSiswaList() {
+      try {
+        const res = await apiCall('getAllSiswa', {});
+        if (res.success && res.siswa) {
+          tokenSiswaList = res.siswa;
+          const sel = document.getElementById('gen-token-siswa');
+          if (!sel) return;
+          sel.innerHTML = '<option value="">— Pilih Siswa —</option><option value="ALL">📊 Semua Siswa (Massal)</option>';
+          res.siswa.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.username;
+            opt.textContent = s.nama_lengkap + ' (' + s.username + ') — Token: ' + (s.token_ujian || 'belum ada');
+            sel.appendChild(opt);
+          });
+        }
+      } catch (e) { console.warn('Gagal load siswa untuk token:', e); }
+    }
+
+    // Toggle custom/auto
+    document.addEventListener('DOMContentLoaded', function() {
+      const autoRadio = document.getElementById('token-mode-auto');
+      const customRadio = document.getElementById('token-mode-custom');
+      if (autoRadio) autoRadio.addEventListener('change', function() {
+        document.getElementById('custom-token-section').classList.add('hidden');
+        document.getElementById('auto-token-section').classList.remove('hidden');
+      });
+      if (customRadio) customRadio.addEventListener('change', function() {
+        document.getElementById('custom-token-section').classList.remove('hidden');
+        document.getElementById('auto-token-section').classList.add('hidden');
+      });
+    });
+
+    function genRandomToken(prefix) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let s = '';
+      for (let i = 0; i < 4; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+      return (prefix || 'TKN') + '-' + s + '-' + new Date().getFullYear();
+    }
+
+    async function generateTokenAdmin() {
+      const target = document.getElementById('gen-token-siswa')?.value || '';
+      if (!target) { showToast('Pilih siswa atau "Semua Siswa" dulu.', 'error'); return; }
+      
+      const mode = document.querySelector('input[name="token-gen-mode"]:checked')?.value || 'auto';
+      const customToken = document.getElementById('custom-token-value')?.value || '';
+      const prefix = document.getElementById('token-prefix')?.value || 'TKN';
+      
+      if (mode === 'custom' && !customToken) {
+        showToast('Isi token custom dulu.', 'error'); return;
+      }
+      
+      const ok = await showConfirm(
+        target === 'ALL' ? 'Generate token untuk SEMUA siswa?' : 'Generate token untuk siswa ini?',
+        { title: 'Generate Token?', confirmText: 'Ya, Generate', type: 'question' }
+      );
+      if (!ok) return;
+      
+      const resultDiv = document.getElementById('gen-token-result');
+      const listDiv = document.getElementById('gen-token-list');
+      resultDiv.classList.add('hidden');
+      
+      if (target === 'ALL') {
+        // Massal
+        const results = [];
+        for (const s of tokenSiswaList) {
+          const token = mode === 'custom' ? customToken : genRandomToken(prefix);
+          const res = await apiCall('generateTokenSiswa', { username: s.username, token: token });
+          if (res.success) {
+            results.push({ username: s.username, nama: s.nama_lengkap, token: token });
+          }
+        }
+        listDiv.innerHTML = results.map(r => `<div>✓ ${r.nama} (${r.username}) → <strong>${r.token}</strong></div>`).join('');
+        resultDiv.classList.remove('hidden');
+        showToast(`Berhasil generate ${results.length} token!`, 'success');
+      } else {
+        // Per siswa
+        const token = mode === 'custom' ? customToken : genRandomToken(prefix);
+        const res = await apiCall('generateTokenSiswa', { username: target, token: token });
+        if (res.success) {
+          listDiv.innerHTML = `<div>✓ Token baru: <strong>${res.token || token}</strong></div>`;
+          resultDiv.classList.remove('hidden');
+          showToast('Token berhasil dibuat!', 'success');
+          loadTokenSiswaList(); // refresh dropdown
+        } else {
+          showToast(res.error || 'Gagal generate token', 'error');
+        }
+      }
+    }
+
+    function copyAllTokens() {
+      const list = document.getElementById('gen-token-list');
+      if (!list) return;
+      const text = list.innerText;
+      navigator.clipboard.writeText(text).then(() => showToast('Token disalin ke clipboard!', 'success'));
     }
 
     /* ============================================================
@@ -2063,7 +2175,8 @@
           res.soal.forEach(s => {
             const opt = document.createElement('option');
             opt.value = s.id;
-            opt.textContent = s.mata_pelajaran + ' • ' + (s.tipe || 'pg') + ' • ' + (s.jumlah_soal || '?') + ' soal';
+            var label = s.nama_paket || (s.mata_pelajaran + ' • ' + (s.tipe || 'pg'));
+            opt.textContent = label + ' (' + (s.jumlah_soal || '?') + ' soal)';
             if (s.id === selectedId) opt.selected = true;
             sel.appendChild(opt);
           });
@@ -2107,6 +2220,107 @@
       } else {
         showToast(res.error || 'Gagal simpan', 'error');
       }
+    }
+
+
+    /* ============================================================
+       GENERATE TOKEN — Admin & Proctor bisa generate custom
+       ============================================================ */
+
+    async function loadTokenSiswaList() {
+      try {
+        const res = await apiCall('getAllSiswa', {});
+        if (res.success && res.siswa) {
+          tokenSiswaList = res.siswa;
+          const sel = document.getElementById('gen-token-siswa');
+          if (!sel) return;
+          sel.innerHTML = '<option value="">— Pilih Siswa —</option><option value="ALL">📊 Semua Siswa (Massal)</option>';
+          res.siswa.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.username;
+            opt.textContent = s.nama_lengkap + ' (' + s.username + ') — Token: ' + (s.token_ujian || 'belum ada');
+            sel.appendChild(opt);
+          });
+        }
+      } catch (e) { console.warn('Gagal load siswa untuk token:', e); }
+    }
+
+    // Toggle custom/auto
+    document.addEventListener('DOMContentLoaded', function() {
+      const autoRadio = document.getElementById('token-mode-auto');
+      const customRadio = document.getElementById('token-mode-custom');
+      if (autoRadio) autoRadio.addEventListener('change', function() {
+        document.getElementById('custom-token-section').classList.add('hidden');
+        document.getElementById('auto-token-section').classList.remove('hidden');
+      });
+      if (customRadio) customRadio.addEventListener('change', function() {
+        document.getElementById('custom-token-section').classList.remove('hidden');
+        document.getElementById('auto-token-section').classList.add('hidden');
+      });
+    });
+
+    function genRandomToken(prefix) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let s = '';
+      for (let i = 0; i < 4; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
+      return (prefix || 'TKN') + '-' + s + '-' + new Date().getFullYear();
+    }
+
+    async function generateTokenAdmin() {
+      const target = document.getElementById('gen-token-siswa')?.value || '';
+      if (!target) { showToast('Pilih siswa atau "Semua Siswa" dulu.', 'error'); return; }
+      
+      const mode = document.querySelector('input[name="token-gen-mode"]:checked')?.value || 'auto';
+      const customToken = document.getElementById('custom-token-value')?.value || '';
+      const prefix = document.getElementById('token-prefix')?.value || 'TKN';
+      
+      if (mode === 'custom' && !customToken) {
+        showToast('Isi token custom dulu.', 'error'); return;
+      }
+      
+      const ok = await showConfirm(
+        target === 'ALL' ? 'Generate token untuk SEMUA siswa?' : 'Generate token untuk siswa ini?',
+        { title: 'Generate Token?', confirmText: 'Ya, Generate', type: 'question' }
+      );
+      if (!ok) return;
+      
+      const resultDiv = document.getElementById('gen-token-result');
+      const listDiv = document.getElementById('gen-token-list');
+      resultDiv.classList.add('hidden');
+      
+      if (target === 'ALL') {
+        // Massal
+        const results = [];
+        for (const s of tokenSiswaList) {
+          const token = mode === 'custom' ? customToken : genRandomToken(prefix);
+          const res = await apiCall('generateTokenSiswa', { username: s.username, token: token });
+          if (res.success) {
+            results.push({ username: s.username, nama: s.nama_lengkap, token: token });
+          }
+        }
+        listDiv.innerHTML = results.map(r => `<div>✓ ${r.nama} (${r.username}) → <strong>${r.token}</strong></div>`).join('');
+        resultDiv.classList.remove('hidden');
+        showToast(`Berhasil generate ${results.length} token!`, 'success');
+      } else {
+        // Per siswa
+        const token = mode === 'custom' ? customToken : genRandomToken(prefix);
+        const res = await apiCall('generateTokenSiswa', { username: target, token: token });
+        if (res.success) {
+          listDiv.innerHTML = `<div>✓ Token baru: <strong>${res.token || token}</strong></div>`;
+          resultDiv.classList.remove('hidden');
+          showToast('Token berhasil dibuat!', 'success');
+          loadTokenSiswaList(); // refresh dropdown
+        } else {
+          showToast(res.error || 'Gagal generate token', 'error');
+        }
+      }
+    }
+
+    function copyAllTokens() {
+      const list = document.getElementById('gen-token-list');
+      if (!list) return;
+      const text = list.innerText;
+      navigator.clipboard.writeText(text).then(() => showToast('Token disalin ke clipboard!', 'success'));
     }
 
     /* ============================================================
